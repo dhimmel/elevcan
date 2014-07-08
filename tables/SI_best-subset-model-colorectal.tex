@@ -1,0 +1,20 @@
+% latex.default(tex.df, file = path, rowname = NULL, caption = cancer.caption,      label = table.label) 
+%
+\begin{table}[!tbp]
+\caption{Optimal best subset regression model for colorectal cancer\label{SI_tab:colorectal}} 
+\begin{center}
+\begin{tabular}{llll}
+\hline\hline
+\multicolumn{1}{c}{predictor}&\multicolumn{1}{c}{$\beta$}&\multicolumn{1}{c}{$\beta_z$}&\multicolumn{1}{c}{p-value}\tabularnewline
+\hline
+no colorectal&0.07 [0.05, 0.09]&0.45 [0.34, 0.57]&4.23$\times10^{-13}$\tabularnewline
+education&-0.23 [-0.30, -0.17]&-0.39 [-0.50, -0.28]&2.51$\times10^{-11}$\tabularnewline
+meat&0.09 [0.04, 0.14]&0.22 [0.10, 0.34]&3.36$\times10^{-04}$\tabularnewline
+black&0.28 [0.06, 0.49]&0.15 [0.03, 0.26]&1.27$\times10^{-02}$\tabularnewline
+elevation&0.65 [-0.42, 1.72]&0.08 [-0.05, 0.20]&2.34$\times10^{-01}$\tabularnewline
+(Intercept)&12.01 [3.74, 20.29]&0.00 [-0.10, 0.10]&4.62$\times10^{-03}$\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+

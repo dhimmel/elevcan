@@ -1,0 +1,22 @@
+% latex.default(summary.texdf, file = file.path(table.dir, "best-subset-summaries.tex"),      rowname = NULL, label = "tab:best-subset", caption = "Optimal Best Subset Model Summaries") 
+%
+\begin{table}[!tbp]
+\caption{Optimal Best Subset Model Summaries\label{tab:best-subset}} 
+\begin{center}
+\begin{tabular}{lllllllll}
+\hline\hline
+\multicolumn{1}{c}{cancer}&\multicolumn{1}{c}{mean (sd)}&\multicolumn{1}{c}{n}&\multicolumn{1}{c}{size}&\multicolumn{1}{c}{$R^2$}&\multicolumn{1}{c}{$p$}&\multicolumn{1}{c}{$\beta$}&\multicolumn{1}{c}{$\beta_z$}&\multicolumn{1}{c}{$\beta_{\%}$}\tabularnewline
+\hline
+lung&56.8 (14.4)&253&5&70.2\%&1.34$\times10^{-17}$&-7.23&-0.35&-12.7\%\tabularnewline
+&&&&&&[-9.29, -5.18]&[-0.46, -0.25]&[-16.35, -9.11]\%\tabularnewline
+breast&119.3 (16.7)&243&5&56.8\%&9.41$\times10^{-04}$&-4.06&-0.17&-3.4\%\tabularnewline
+&&&&&&[-7.41, -0.71]&[-0.31, -0.03]&[-6.21, -0.59]\%\tabularnewline
+colorectal&41.9 (6.0)&243&5&34.1\%&8.83$\times10^{-01}$&0.65&0.08&1.5\%\tabularnewline
+&&&&&&[-0.76, 2.06]&[-0.09, 0.24]&[-1.82, 4.92]\%\tabularnewline
+prostate&148.6 (23.9)&259&4&18.5\%&9.74$\times10^{-01}$&4.86&0.14&3.3\%\tabularnewline
+&&&&&&[-1.62, 11.34]&[-0.05, 0.34]&[-1.09, 7.63]\%\tabularnewline
+\hline
+\end{tabular}
+\end{center}
+\end{table}
+
