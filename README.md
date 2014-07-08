@@ -4,7 +4,7 @@ Project code and intermediate files.
 
 ###Directory Structure
 
-`code/`: All code that produced final project output. Run `Rscript ./run.R` to perform the analysis starting from the county-level dataset.
+`code/`: All code that produced final project output. Run `Rscript ./run.R` to perform the analysis starting from the county-level dataset.  
 `code/data-creation/`: contains code that was used to create the county-level dataset including resource parsing, data integration, and population-weighted elevaton computation.
 
 `output/`: output from running the analysis including the stdout log, underlying figure data, and persistent copy of the final R session.
