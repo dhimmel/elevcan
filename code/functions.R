@@ -64,11 +64,10 @@ BarometricFormula <- function(
 
 ReadCountyData <- function(path, 
   states=c('AZ', 'CA', 'CO', 'ID', 'MT', 'NV', 'NM', 'OR', 'UT', 'WA', 'WY'),
-  min.population=1e4, max.native=25.0, max.migration=40.0, verbose=FALSE) {
+  min.population=1e4, max.native=25.0, max.immigration=40.0, verbose=FALSE) {
   # Read the data file with United States county level measurements and
   # perform filtering. states is a vector of state abbreviations to keep.
   # Use states='all' to suppress state filtering.
-  # TODO verbose
 
   data.df <- read.delim(path, na.strings='', 
     colClasses=c('fips'='character'), stringsAsFactors=FALSE)
@@ -91,13 +90,23 @@ ReadCountyData <- function(path,
   if (states[1] != 'all') {data.df <- subset(data.df, state %in% states)}
   data.df <- subset(data.df, population >= min.population)
   data.df <- subset(data.df, native <= max.native)
-  data.df <- subset(data.df, migration <= max.migration)
+  data.df <- subset(data.df, immigration <= max.immigration)
 
   # Calculate incidence minus specific cancer
   data.df$no_lung <- data.df$all_cancer - data.df$lung
   data.df$no_colorectal <- data.df$all_cancer - data.df$colorectal
-  data.df$no_breast <- data.df$all_cancer - data.df$breast / 2
-  data.df$no_prostate <- data.df$all_cancer - data.df$prostate / 2
+
+  #data.df$no_breast <- data.df$all_cancer - data.df$breast * (1 - data.df$male / 100)
+  #data.df$no_prostate <- data.df$all_cancer - data.df$prostate * data.df$male / 100
+
+  data.df$no_breast <- data.df$all_cancer_female - data.df$breast
+  data.df$no_prostate <- data.df$all_cancer_male - data.df$prostate
+
+  if (verbose) {
+    mean.smokin.ci <- weighted.mean(data.df$smoking_upper - data.df$smoking_lower, w=data.df$weight, na.rm=TRUE)
+    cat(AddNewLines(sprintf('Weighted mean of smoking confidence intervals: %.2f%%', mean.smokin.ci)))
+    CatDiv()
+  }
 
   return(data.df)
 }
@@ -105,7 +114,7 @@ ReadCountyData <- function(path,
 ReadAllCountyData <- function(path) {
   # No filtering
   data.df <- ReadCountyData(path, states='all', min.population=0,
-    max.native=100, max.migration=100)
+    max.native=100, max.immigration=100)
   return(data.df)
 }
 

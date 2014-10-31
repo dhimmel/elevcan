@@ -130,9 +130,11 @@ for (group in lung.subgroups) {
   variables <- lung.predictors
   if (group == 'male_lung') {
     variables[variables == 'smoking'] <- 'male_smoking'
+    variables <- variables[variables != 'male']
   }
   if (group == 'female_lung') {
     variables[variables == 'smoking'] <- 'female_smoking'
+    variables <- variables[variables != 'male']
   }
   form <- as.formula(paste(group, '~', paste(c('1', variables), collapse=' + ')))
   model <- lm(form, weights=weight, data=subgroup.df)
@@ -155,7 +157,7 @@ formula3 <- as.formula(paste('lung', '~', paste(c('1', predictors3), collapse=' 
 model.list[['radon3']] <- lm(formula3, weights=weight, data=lung.df)
 
 ###################################
-## Radon Analysis
+## UVB Analysis
 model.list[['uvb1']] <- lm(lung ~ uvb + smoking, weights=weight, data=lung.allvar.df)
 model.list[['uvb2']] <- lm(lung ~ uvb + smoking + elevation, weights=weight, data=lung.allvar.df)
 predictors3 <- c('uvb', lung.predictors)
@@ -231,6 +233,4 @@ DeltaNewCases <- function(elev.coef) {
 cat(AddNewLines(sprintf('Holding everything else constant, were all counties to rise in elevation to that of the highest U.S. county, we estimate %.0f [99%% CI: %.0f to %.0f] fewer new lung cancer cases per year would arise.', 
   -DeltaNewCases(elev.coef), -DeltaNewCases(elev.ci[2]), -DeltaNewCases(elev.ci[1]) )))
 CatDiv()
-
-
 

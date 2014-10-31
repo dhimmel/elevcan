@@ -1,6 +1,7 @@
 # Manual Ignores
 manual/paper/
 data/
+output/session.RData
 
 # Created by http://www.gitignore.io
 

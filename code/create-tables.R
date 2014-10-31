@@ -159,7 +159,7 @@ Hmisc::latex(predictor.texdf, file=file.path(table.dir, 'predictors.tex'),
 ## Best Subset Model Tables
 for (cancer in cancers) {
   csum.df <- summary.df[summary.df$cancer == cancer, ]
-  csum.df <- csum.df[order(csum.df$predictor  == '(Intercept)', csum.df$pval), ]
+  csum.df <- csum.df[order(csum.df$predictor  == '(Intercept)', -abs(csum.df$zcoef)), ]
   csum.df$predictor <- gsub('_', ' ', csum.df$predictor)
   csum.df$predictor <- factor(csum.df$predictor, levels=csum.df$predictor)
 

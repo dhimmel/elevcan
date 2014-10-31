@@ -81,6 +81,45 @@ SetGGTheme <- function(gg) {
 ################################################################################
 ################################# Execution ####################################
 
+######################################
+## Filtering threshold determination 
+
+unfiltered.df <- ReadCountyData(county.data.path, 
+  states=states, min.population=min.population, 
+  max.native=100, max.immigration=100)
+
+outlier.covars <- c(global.covars, 'smoking', 'male')
+outlier.form <- as.formula(paste('lung ~', paste(c('1', outlier.covars), collapse=' + ')))
+outlier.model <- lm(outlier.form, weight=weight, unfiltered.df, na.action='na.exclude')
+
+filter.df <- data.frame(
+  'fips'=unfiltered.df[, 'fips'],
+  'name'=unfiltered.df[, 'name'],
+  'weight'=unfiltered.df[, 'weight'],
+  'residual'=resid(outlier.model),
+  'Immigration'=unfiltered.df[, 'immigration'],
+  'Native'=unfiltered.df[, 'native']
+)
+
+filter.melt <- reshape2::melt(filter.df, 
+  measure.vars=c('Native', 'Immigration'), value.name='percent')
+threshold.df <- data.frame('variable'=c('Native', 'Immigration'), 
+  'xmin'=c(max.native, max.immigration), xmax=Inf, ymin=-Inf, ymax=Inf)
+
+gg.filter <- ggplot(filter.melt, aes(percent, abs(residual)))
+gg.filter <- SetGGTheme(gg.filter) +
+  facet_grid(. ~ variable, scales='free_x') +
+  geom_rect(data=threshold.df, aes(xmin=xmin, xmax=xmax, ymin=ymin, ymax=ymax, x=NULL, y=NULL),
+    fill=biv.fill.col, alpha=0.5) +
+  geom_smooth(aes(weight=weight), span=5, color=par.line.col, fill=par.fill.col, method='loess') +
+  geom_point(aes(alpha=weight^.5)) + scale_alpha(range=c(0.1, 1)) +
+  guides(alpha=FALSE) +
+  xlab('Percent') + ylab('Absolute Residual') +
+  theme(strip.background=element_rect(fill=strip.fill))
+
+OpenPDF('filter.pdf', width=full.width, height=3)
+print(gg.filter); ClosePDF('filter.pdf')
+
 
 ############################
 ## Variable Correlation Plot
@@ -487,7 +526,7 @@ gg.bic <- SetGGTheme(gg.bic) +
   scale_y_continuous(breaks=seq(-20, 20, 2), limits=c(-13.2, 2)) +
   theme(plot.margin=grid::unit(c(5, 2, 2, 2), 'points'))
 
-OpenPDF('environment.pdf', width=half.width, height=6.8)
-gridExtra::grid.arrange(cor.list$plot, gg.bic, ncol=1)
+OpenPDF('environment.pdf', width=full.width, height=half.width)
+gridExtra::grid.arrange(cor.list$plot, gg.bic, nrow=1)
 ClosePDF('environment.pdf')
 

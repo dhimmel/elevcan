@@ -18,9 +18,9 @@ county.data.path <- file.path(data.dir, 'county-data.txt')
 
 ## County filtering parameters
 states <- c('AZ', 'CA', 'CO', 'ID', 'MT', 'NV', 'NM', 'OR', 'UT', 'WA', 'WY')
-min.population=1e4
-max.native=25.0
-max.migration=40.0
+min.population <- 1e4
+max.native <- 25.0
+max.immigration <- 40.0
 
 ## Cancers to evaluate (sets plotting order)
 cancers <- c('lung', 'breast', 'colorectal', 'prostate')
@@ -28,9 +28,9 @@ cancers <- c('lung', 'breast', 'colorectal', 'prostate')
 
 global.covars <- c('metro', 'white', 'black', 'education', 'income', 'obesity')
 specific.covars <- list(
-  'lung'       = c('no_lung', 'smoking', 'radon', 'particulate'),
+  'lung'       = c('no_lung', 'male', 'smoking', 'radon', 'particulate'),
   'breast'     = c('no_breast', 'female_smoking', 'mammogram', 'drinking'),
-  'colorectal' = c('no_colorectal', 'smoking', 'drinking', 'diabetes', 'meat'),
+  'colorectal' = c('no_colorectal', 'male', 'smoking', 'drinking', 'diabetes', 'meat'),
   'prostate'   = c('no_prostate', 'meat')
 )
 all.covars <- sort(unique(c(global.covars, do.call(c, specific.covars))))
@@ -51,7 +51,7 @@ cat(sprintf('Initiating Analysis: %s\n', time.chr)); CatDiv()
 # Read county data
 data.df <- ReadCountyData(county.data.path, 
   states=states, min.population=min.population, 
-  max.native=max.native, max.migration=max.migration, verbose=TRUE)
+  max.native=max.native, max.immigration=max.immigration, verbose=TRUE)
 
 # Calculate models
 source(file.path(code.dir, 'create-models.R'))

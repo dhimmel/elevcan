@@ -130,9 +130,17 @@ ReadCountyTobaccoSAE <- function(path, printing=FALSE) {
 
   smoking <- mapply(function(x, y) mean(c(x, y), na.rm=TRUE), as.numeric(tobacco.tab$Model.Based.Estimate....),
     as.numeric(tobacco.tab$Model.Based.Estimate.....1))
-  smoking[is.nan(smoking)] <- NA
+  smoking.lower <- mapply(function(x, y) mean(c(x, y), na.rm=TRUE), as.numeric(tobacco.tab$Lower.CI..95..),
+    as.numeric(tobacco.tab$Lower.CI..95...1))
+  smoking.upper <- mapply(function(x, y) mean(c(x, y), na.rm=TRUE), as.numeric(tobacco.tab$Upper.CI..95..),
+    as.numeric(tobacco.tab$Upper.CI..95...1))
 
-  smoking.tab <- data.frame('fips'=tobacco.fips, 'smoking'=smoking, stringsAsFactors=FALSE)
+  smoking[is.nan(smoking)] <- NA
+  smoking.lower[is.nan(smoking.lower)] <- NA
+  smoking.upper[is.nan(smoking.upper)] <- NA
+
+  smoking.tab <- data.frame('fips'=tobacco.fips, 'smoking'=smoking,
+    'smoking.lower'=smoking.lower, 'smoking.upper'=smoking.upper, stringsAsFactors=FALSE)
   smoking.tab <- smoking.tab[order(smoking.tab$fips), ]
   return(smoking.tab)
 }
