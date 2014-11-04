@@ -15,7 +15,7 @@ Project code and intermediate files for
 
 `figures/`: Figures as pdfs generated from the analysis. Additional manual editing was performed for some figures.
 
-`data/`: text files of the county-level dataset. Currently hidden until publication date.
+`data/`: text files of the county-level dataset.
 
 `manual/`: Contains manually editted files (files that are not produced by running the analysis). Final versions of the figures are available as pdfs. Saved sessions from propreitary software used for image processing are also included.
 
