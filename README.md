@@ -1,6 +1,8 @@
 ##Lung cancer incidence decreases with elevation: evidence for oxygen as an inhaled carcinogen
 
-Project code and intermediate files.
+Project code and intermediate files for
+
+> Simeonov KP, Himmelstein DS. (2014) Lung cancer incidence decreases with elevation: evidence for oxygen as an inhaled carcinogen. PeerJ PrePrints 2:e587v1 http://dx.doi.org/10.7287/peerj.preprints.587v1
 
 ###Directory Structure
 
