@@ -95,10 +95,6 @@ ReadCountyData <- function(path,
   # Calculate incidence minus specific cancer
   data.df$no_lung <- data.df$all_cancer - data.df$lung
   data.df$no_colorectal <- data.df$all_cancer - data.df$colorectal
-
-  #data.df$no_breast <- data.df$all_cancer - data.df$breast * (1 - data.df$male / 100)
-  #data.df$no_prostate <- data.df$all_cancer - data.df$prostate * data.df$male / 100
-
   data.df$no_breast <- data.df$all_cancer_female - data.df$breast
   data.df$no_prostate <- data.df$all_cancer_male - data.df$prostate
 

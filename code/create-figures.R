@@ -3,8 +3,9 @@
 ################################################################################
 ################################ Package Loading ###############################
 library(ggplot2)
-library(rmeta)
-AssertPackages(c('reshape2', 'grid'))
+library(grid)
+library(metafor)
+AssertPackages('reshape2')
 
 #options(stringsAsFactors=FALSE)
 ################################################################################
@@ -186,7 +187,6 @@ OutcomePredictorCorPlot <- function(variable.df, outcomes, predictors,
   return(cor.list)
 }
 
-#  colnames(data.df) <- gsub('_', ' ', colnames(data.df))
 other.cancers <- c('no_lung', 'no_breast', 'no_prostate', 'no_colorectal')
 clust.predictors <- setdiff(c('elevation', 'all_cancer', all.covars), other.cancers)
 clust.cancers <- c('lung', 'colorectal', 'breast', 'prostate')
@@ -393,7 +393,7 @@ state.df <- do.call(rbind, lapply(states, function(state) {
    'state_n'=sprintf('%s (%s)', state, nrow(state.df)),
    'elevation.coef'=coef(state.lm)['elevation'], 
    'elevation.se'=summary(state.lm)$coef['elevation', 'Std. Error'],
-   'lower'=conf.int['elevation', 1], 'upper'=conf.int['elevation', 2],
+   'elevation.lower'=conf.int['elevation', 1], 'elevation.upper'=conf.int['elevation', 2],
    'smoking.coef'=coef(state.lm)['smoking'],
    'smoking.lower'=conf.int['smoking', 1], 'smoking.upper'=conf.int['smoking', 2],
    stringsAsFactors=FALSE)
@@ -401,20 +401,34 @@ state.df <- do.call(rbind, lapply(states, function(state) {
 row.names(state.df) <- state.df$state
 state.x.limits <- c('Meta', state.df[order(state.df$elevation.coef), 'state_n'])
 
-state.meta <- rmeta::meta.summaries(state.df$elevation.coef, state.df$elevation.se)
-meta.conf.int <- rmeta::summary.meta.summaries(state.meta, conf.level=0.99)$summci
+# Computation of the I^2
+state.random <- metafor::rma.uni(yi=state.df$elevation.coef,
+  sei=state.df$elevation.se, level=99,  method='REML')
+rma.confint <- metafor::confint.rma.uni(
+  state.random, level=95, control=list('tau2.max'=1e5))
+i2 <- rma.confint$random['I^2(%)', 'estimate']
+i2.lower <- rma.confint$random['I^2(%)', 'ci.lb']
+i2.upper <- rma.confint$random['I^2(%)', 'ci.ub']
+cat(sprintf('Statewise Meta-Analysis I-squared:\n%.1f%% [95%% CI: %.1f%%, %.1f%%]\n',
+  i2, i2.lower, i2.upper))
+CatDiv()
+
+# Fixed Effects meta-analysis
+state.fixed <- metafor::rma.uni(yi=state.df$elevation.coef,
+  sei=state.df$elevation.se, level=99,  method='FE')
+
 state.df <- rbind(state.df, data.frame(
-  'state'='Meta', 'state_n'='Meta', 'elevation.coef'=meta.conf.int[2], 
-  'elevation.se'=NA, 'lower'=meta.conf.int[1], 'upper'=meta.conf.int[3],
+  'state'='Meta', 'state_n'='Meta', 'elevation.coef'=state.fixed$b[1], 
+  'elevation.se'=NA, 'elevation.lower'=state.fixed$ci.lb, 'elevation.upper'=state.fixed$ci.ub,
   'smoking.coef'=NA, 'smoking.lower'=NA, 'smoking.upper'=NA))
 lung.conf.int <- confint(model.list$lung, level=0.99)['elevation', ]
 
-gg.state <- ggplot(state.df, aes(state_n, elevation.coef, ymin=lower, ymax=upper))
+gg.state <- ggplot(state.df, aes(state_n, elevation.coef, ymin=elevation.lower, ymax=elevation.upper))
 gg.state <- SetGGTheme(gg.state) + 
   geom_hline(yintercept=0, linetype='dashed', color='darkgray') + 
   geom_rect(xmin=-Inf, xmax=Inf, fill=par.fill.col,
     ymin=lung.conf.int[1], ymax=lung.conf.int[2]) +
-  geom_errorbar(aes(color=state_n == 'Meta'), size=.4, width=.2) + #geom_point(size=3, shape=18) + 
+  geom_errorbar(aes(color=state_n == 'Meta'), size=.4, width=.2) +
   geom_point(aes(color=state_n == 'Meta'), size=2, shape=19) + 
   xlab('State') + ylab('Elevation Coefficient') + ylab(expression(beta[elevation])) + 
   scale_x_discrete(limits=state.x.limits) + 
