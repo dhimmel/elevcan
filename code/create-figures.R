@@ -202,8 +202,9 @@ write.table(cor.list$data, file.path(figdata.dir, 'variable-correlation.txt'),
 
 # Create data frames for ggplot
 biv.df <- do.call(rbind, lapply(cancers, function(cancer) {
-  cancer.df <- cancer.list[[cancer]]$cancer.df
+  cancer.df <- cancer.list[[cancer]]$cancer.allvar.df
   data.frame(
+    'fips'      = cancer.df[, 'fips'],
     'Elevation' = cancer.df[, 'elevation'],
     'Incidence' = cancer.df[, cancer],
     'weight'    = cancer.df[, 'weight'],
@@ -213,6 +214,7 @@ biv.df <- do.call(rbind, lapply(cancers, function(cancer) {
 par.df <- do.call(rbind, lapply(cancers, function(cancer) {
   par.cancer.df <- par.df.list[[cancer]]
   data.frame(
+    'fips'      = par.cancer.df[, 'fips'],
     'Elevation' = par.cancer.df[, 'elevation_residual'],
     'Incidence' = par.cancer.df[, 'cancer_residual'],
     'weight'    = par.cancer.df[, 'weight'],

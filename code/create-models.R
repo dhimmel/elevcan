@@ -90,7 +90,7 @@ par.model.list <- list()
 par.df.list <- list()
 
 for (cancer in cancers) {
-  cancer.df <- cancer.list[[cancer]]$cancer.df
+  cancer.df <- cancer.list[[cancer]]$cancer.allvar.df
   
   # Calculate bivariate model
   biv.form <- as.formula(paste(cancer, '~ 1 + elevation'))
@@ -99,6 +99,7 @@ for (cancer in cancers) {
   # Calculate partial model
   opt.model <- model.list[[cancer]]
   par.df <- data.frame(
+    'fips'               = cancer.df$fips,
     'cancer_residual'    = PartialRegressionY(opt.model),
     'elevation_residual' = PartialRegressionX(opt.model),
     'weight'             = cancer.df$weight)
