@@ -1,3 +1,4 @@
+library(methods)
 library(leaps)
 library(glmnet)
 
@@ -6,7 +7,7 @@ zmodel.list <- list()
 cancer.list <- list()
 
 ######################################
-## Best Subset and Lasso Regression 
+## Best Subset and Lasso Regression
 
 for (cancer in cancers) {
   # Create a list to store results
@@ -15,7 +16,7 @@ for (cancer in cancers) {
   # Create a cancer specific dataset with the included variables
   covariates <- unique(c(global.covars,  specific.covars[[cancer]]))
   cancer.df <- subset(data.df, select=c(cancer, 'elevation', covariates, 'weight'))
-  
+
   # Remove any counties with missing data
   keep.row <- rowSums(is.na(cancer.df)) == 0
   cancer.df <- cancer.df[keep.row, ]
@@ -53,6 +54,7 @@ for (cancer in cancers) {
   set.seed(0)
   cv.lasso <- glmnet::cv.glmnet(X.mat, y, w, alpha=glmnet.alpha, standardize=FALSE)
   index.1se <- cv.lasso$lambda == cv.lasso$lambda.1se
+  stopifnot(length(cv.lasso$lambda) == length(cv.lasso$glmnet.fit$dev.ratio))
   rsub.list$lasso.r2 <- cv.lasso$glmnet.fit$dev.ratio[index.1se]
   rsub.list$lasso <- cv.lasso
 
@@ -92,11 +94,11 @@ par.df.list <- list()
 
 for (cancer in cancers) {
   cancer.df <- cancer.list[[cancer]]$cancer.allvar.df
-  
+
   # Calculate bivariate model
   biv.form <- as.formula(paste(cancer, '~ 1 + elevation'))
   biv.model.list[[cancer]] <- lm(biv.form, weights=weight, data=cancer.df)
-  
+
   # Calculate partial model
   opt.model <- model.list[[cancer]]
   par.df <- data.frame(
@@ -123,7 +125,7 @@ lung.predictors <- cancer.list$lung$predictors
 ###########################################################
 ## Subgroup partial models
 lung.subgroups <- c('over_65_lung', 'under_65_lung', 'male_lung', 'female_lung')
-subgroup.df <- na.omit(data.df[, c(lung.subgroups, 'male_smoking', 
+subgroup.df <- na.omit(data.df[, c(lung.subgroups, 'male_smoking',
   'female_smoking', lung.predictors, 'weight')])
 group.df.list <- list()
 group.par.list <- list()
@@ -208,9 +210,9 @@ envir.df <- do.call(rbind, lapply(cancers, function(cancer) {
     bs.df[, j] <- WeightedScale(bs.df[, j], bs.df$weight)
   }
   envir.df <- do.call(rbind, lapply(envir.covars, function(env.var) {
-    min.bic <- BestSubsetMinBIC(bs.df, response=cancer, 
+    min.bic <- BestSubsetMinBIC(bs.df, response=cancer,
       forced=env.var, covariates=setdiff(covariates, env.var))
-    data.frame('cancer'=cancer, 'counties'=nrow(bs.df), 'forced'=env.var, 
+    data.frame('cancer'=cancer, 'counties'=nrow(bs.df), 'forced'=env.var,
       'coefficient'=min.bic$env.coef, 'coef_pval'=min.bic$env.pval,
       'bic'=min.bic$bic, stringsAsFactors=FALSE)
   }))
@@ -232,7 +234,6 @@ elev.ci <- confint(model.list$lung, level=0.99)['elevation', ]
 max.elev <- max(us.df$elevation, na.rm=TRUE)
 DeltaNewCases <- function(elev.coef) {
   sum(elev.coef * (max.elev - us.df$elevation) * us.df$population / 1e5, na.rm=TRUE)}
-cat(AddNewLines(sprintf('Holding everything else constant, were all counties to rise in elevation to that of the highest U.S. county, we estimate %.0f [99%% CI: %.0f to %.0f] fewer new lung cancer cases per year would arise.', 
+cat(AddNewLines(sprintf('Holding everything else constant, were all counties to rise in elevation to that of the highest U.S. county, we estimate %.0f [99%% CI: %.0f to %.0f] fewer new lung cancer cases per year would arise.',
   -DeltaNewCases(elev.coef), -DeltaNewCases(elev.ci[2]), -DeltaNewCases(elev.ci[1]) )))
 CatDiv()
-
