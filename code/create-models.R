@@ -53,9 +53,9 @@ for (cancer in cancers) {
   X.mat <- as.matrix(X)
   set.seed(0)
   cv.lasso <- glmnet::cv.glmnet(X.mat, y, w, alpha=glmnet.alpha, standardize=FALSE)
-  index.1se <- cv.lasso$lambda == cv.lasso$lambda.1se
-  stopifnot(length(cv.lasso$lambda) == length(cv.lasso$glmnet.fit$dev.ratio))
-  rsub.list$lasso.r2 <- cv.lasso$glmnet.fit$dev.ratio[index.1se]
+  # Caclulate R-squared
+  pred.mat <- cbind(y_true = y, y_pred = predict(cv.lasso, s='lambda.1se', newx=X.mat)[, 1])
+  rsub.list$lasso.r2 <- boot::corr(d=pred.mat, w=w) ^ 2
   rsub.list$lasso <- cv.lasso
 
   # Store results
