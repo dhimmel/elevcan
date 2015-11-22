@@ -49,7 +49,7 @@ Model2LatexCoefCI <- function(model, predictor, level=0.95, standardize=FALSE, d
 
   if (standardize) {
     model.df <- model.frame(model)
-    if (! any('(weights)' == colnames(model.df))) 
+    if (! any('(weights)' == colnames(model.df)))
       {model.df[, '(weights)'] <- 1}
     w <- model.df[, '(weights)']
     response.sd <- Hmisc::wtd.var(model.df[, 1], weights=w, normwt=TRUE) ^ 0.5
@@ -86,7 +86,7 @@ summary.texdf <- do.call(rbind, lapply(cancers, function(cancer) {
 
   summary.row <- data.frame('cancer'=cancer,
     'mean (sd)'=LatexMeanSD(cancer.df[, cancer], cancer.df[, 'weight'], 1, 1),
-    'n'=nrow(cancer.df), 'size'=length(predictors), 
+    'n'=nrow(cancer.df), 'size'=length(predictors),
     '$R^2$'=LatexPercent(summary(model)$r.squared),
     '$p$'=LatexPvalue(elev.pval),
     '$\\beta$'=LatexCoefficient(elev.coef),
@@ -122,8 +122,8 @@ lasso.texdf <- do.call(rbind, lapply(cancers, function(cancer) {
     'cancer'=cancer,
     'size'=sum(lasso.df$Cancer == SimpleCap(cancer)),
     '$R^2$'=LatexPercent(cancer.list[[cancer]]$lasso.r2),
-    '$\\beta$'=LatexCoefficient(elev.coef), 
-    '$\\beta_z$'=LatexCoefficient(elev.zcoef), 
+    '$\\beta$'=LatexCoefficient(elev.coef),
+    '$\\beta_z$'=LatexCoefficient(elev.zcoef),
     '$\\beta_{\\%}$'=LatexPercent(elev.coef.percent),
     check.names=FALSE, stringsAsFactors=FALSE, row.names=cancer)
   return(summary.row)
@@ -163,7 +163,7 @@ for (cancer in cancers) {
   csum.df$predictor <- gsub('_', ' ', csum.df$predictor)
   csum.df$predictor <- factor(csum.df$predictor, levels=csum.df$predictor)
 
-  tex.df <- plyr::ddply(csum.df, 'predictor', plyr::summarize, 
+  tex.df <- plyr::ddply(csum.df, 'predictor', plyr::summarize,
     '$\\beta$'=LatexCoefCI(coef, coef_lower, coef_upper),
     '$\\beta_z$'=LatexCoefCI(zcoef, zcoef_lower, zcoef_upper),
     'p-value'=LatexPvalue(pval))
@@ -171,7 +171,7 @@ for (cancer in cancers) {
   path <- file.path(table.dir, sprintf('SI_best-subset-model-%s.tex', cancer))
   cancer.caption <- sprintf('Optimal best subset regression model for %s cancer', cancer)
   table.label <- sprintf('SI_tab:%s', cancer)
-  Hmisc::latex(tex.df, file=path, rowname=NULL, 
+  Hmisc::latex(tex.df, file=path, rowname=NULL,
     caption=cancer.caption, label=table.label)
 }
 
@@ -187,9 +187,7 @@ confounding.texdf <- data.frame('model'=1:3,
   #'uvb $\\beta$'=sapply(uvb.list, Model2LatexCoefCI, predictor='uvb'),
   'uvb $\\beta_z$'=sapply(uvb.list, Model2LatexCoefCI, predictor='uvb', standardize=TRUE),
   'uvb p-value'=sapply(sapply(uvb.list, NegativeCoefTest, predictor='uvb'), LatexPvalue),
-  check.names=FALSE, stringsAsFactors=FALSE) 
+  check.names=FALSE, stringsAsFactors=FALSE)
 
 Hmisc::latex(confounding.texdf, file=file.path(table.dir, 'confounding.tex'),
   rowname=NULL, label='tab:confounding', caption='Confounding effect of elevation on radon and UVB lung cancer association.')
-
-

@@ -44,7 +44,7 @@ OpenPDF <- function(filename, width=4.86, height=4.8) {
 
 ClosePDF <- function(filename) {
   dev.off()
-  path <- file.path(figure.dir, filename)  
+  path <- file.path(figure.dir, filename)
   embedFonts(path)
 }
 
@@ -83,10 +83,10 @@ SetGGTheme <- function(gg) {
 ################################# Execution ####################################
 
 ######################################
-## Filtering threshold determination 
+## Filtering threshold determination
 
-unfiltered.df <- ReadCountyData(county.data.path, 
-  states=states, min.population=min.population, 
+unfiltered.df <- ReadCountyData(county.data.path,
+  states=states, min.population=min.population,
   max.native=100, max.immigration=100)
 
 outlier.covars <- c(global.covars, 'smoking', 'male')
@@ -102,9 +102,9 @@ filter.df <- data.frame(
   'Native'=unfiltered.df[, 'native']
 )
 
-filter.melt <- reshape2::melt(filter.df, 
+filter.melt <- reshape2::melt(filter.df,
   measure.vars=c('Native', 'Immigration'), value.name='percent')
-threshold.df <- data.frame('variable'=c('Native', 'Immigration'), 
+threshold.df <- data.frame('variable'=c('Native', 'Immigration'),
   'xmin'=c(max.native, max.immigration), xmax=Inf, ymin=-Inf, ymax=Inf)
 
 gg.filter <- ggplot(filter.melt, aes(percent, abs(residual)))
@@ -141,7 +141,7 @@ SelfCorrelationDF <- function(variable.df) {
   cor.melt <- na.omit(as.data.frame(cor.melt))
 }
 
-OutcomePredictorCorPlot <- function(variable.df, outcomes, predictors, 
+OutcomePredictorCorPlot <- function(variable.df, outcomes, predictors,
   sort.predictors=TRUE, barwidth=10, barheight=1, xtext.angle=65,
   legend.position =c(1, 0.75)) {
 
@@ -152,7 +152,7 @@ OutcomePredictorCorPlot <- function(variable.df, outcomes, predictors,
 
   # Compute pairwise correlations
   predictor.cor.df <- SelfCorrelationDF(variable.df[, predictors])
-  outcome.cor.df <- reshape2::melt(cor(variable.df[, outcomes, drop=FALSE], 
+  outcome.cor.df <- reshape2::melt(cor(variable.df[, outcomes, drop=FALSE],
     variable.df[, predictors], use='pairwise.complete.obs'),
     varnames=c('x', 'y'), value.name='correlation')
   cor.df <- rbind(outcome.cor.df, predictor.cor.df)
@@ -164,10 +164,10 @@ OutcomePredictorCorPlot <- function(variable.df, outcomes, predictors,
   ylabels <- gsub('_', ' ', ylimits)
   gg.cor <- ggplot(cor.df, aes(x, y, fill=correlation))
   gg.cor <- SetGGTheme(gg.cor) +
-    geom_tile(color='white') + 
+    geom_tile(color='white') +
     scale_fill_gradientn(name=expression("Pearson's" * ~ rho),
-      limits=c(-1, 1), colours=div.cols) + 
-    scale_x_discrete(limits=xlimits, labels=xlabels) + 
+      limits=c(-1, 1), colours=div.cols) +
+    scale_x_discrete(limits=xlimits, labels=xlabels) +
     scale_y_discrete(limits=ylimits, labels=ylabels) +
     theme(axis.text.x=element_text(angle=xtext.angle, hjust=1)) +
     xlab(NULL) + ylab(NULL) + coord_fixed() +
@@ -175,7 +175,7 @@ OutcomePredictorCorPlot <- function(variable.df, outcomes, predictors,
       panel.grid.minor=element_blank(), panel.border=element_blank(),
       axis.line=element_line(color='grey50', size=0.25)) +
     theme(legend.justification=c(1, 0),
-      legend.position=legend.position, 
+      legend.position=legend.position,
       legend.direction='horizontal') +
     guides(fill=guide_colorbar(barwidth=barwidth, barheight=barheight, title.position='top', title.hjust=0.5)) +
     geom_vline(xintercept=length(outcomes) + 0.5, size=0.25, color='grey50')
@@ -195,7 +195,7 @@ cor.list <- OutcomePredictorCorPlot(data.df, clust.cancers, clust.predictors)
 OpenPDF('correlation.pdf', width=4.86, height=4.25)
 print(cor.list$plot); ClosePDF('correlation.pdf')
 
-write.table(cor.list$data, file.path(figdata.dir, 'variable-correlation.txt'), 
+write.table(cor.list$data, file.path(figdata.dir, 'variable-correlation.txt'),
   row.names=FALSE, sep='\t', quote=FALSE)
 #####################################
 ## Bivariate and Partial Scatterplots
@@ -224,13 +224,13 @@ par.df <- do.call(rbind, lapply(cancers, function(cancer) {
 # Create data frames with geom_text labels
 biv.label.df <- do.call(rbind, lapply(cancers, function(cancer) {
   biv.model <- biv.model.list[[cancer]]
-  data.frame('Elevation'=Inf, 'Incidence'=Inf, 'Cancer'=SimpleCap(cancer), 
+  data.frame('Elevation'=Inf, 'Incidence'=Inf, 'Cancer'=SimpleCap(cancer),
     'coef'=LabelCoef(biv.model), 'r2'=LabelR2(biv.model))
 }))
 
 par.label.df <- do.call(rbind, lapply(cancers, function(cancer) {
   par.model <- par.model.list[[cancer]]
-  data.frame('Elevation'=Inf, 'Incidence'=Inf, 'Cancer'=SimpleCap(cancer), 
+  data.frame('Elevation'=Inf, 'Incidence'=Inf, 'Cancer'=SimpleCap(cancer),
     'coef'=LabelCoef(par.model, 'elevation_residual'), 'r2'=LabelR2(par.model))
 }))
 
@@ -262,9 +262,9 @@ OpenPDF('scatterplots.pdf', width=full.width, height=12)
 gridExtra::grid.arrange(ggbiv, ggpar, nrow=1)
 ClosePDF('scatterplots.pdf')
 
-write.table(biv.df, file.path(figdata.dir, 'scatterplot-bivariate.txt'), 
+write.table(biv.df, file.path(figdata.dir, 'scatterplot-bivariate.txt'),
   row.names=FALSE, sep='\t', quote=FALSE)
-write.table(par.df, file.path(figdata.dir, 'scatterplot-partial.txt'), 
+write.table(par.df, file.path(figdata.dir, 'scatterplot-partial.txt'),
   row.names=FALSE, sep='\t', quote=FALSE)
 
 #####################################
@@ -273,7 +273,7 @@ write.table(par.df, file.path(figdata.dir, 'scatterplot-partial.txt'),
 BestSubsetDF <- function(cancer) {
   rsubs <- cancer.list[[cancer]]$rsubs
   max.size <- rsubs$nvmax - 2
-  predictors.list <- append(list('elevation'), 
+  predictors.list <- append(list('elevation'),
     lapply(1:max.size, function(i) names(coef(rsubs, i)[-1])))
   subset.df <- do.call(rbind, lapply(predictors.list, function(predictors) {
     form <- as.formula(sprintf('%s ~ 1 + %s', cancer, paste(predictors, collapse=' + ')))
@@ -297,11 +297,11 @@ subset.df <- subset(subset.df, size <= 10)
 gg.bs <- ggplot(subset.df, aes(x=size, y=estimate, ymin=lower, ymax=upper, color=bic))
 gg.bs <- SetGGTheme(gg.bs) +
   geom_hline(yintercept=0, linetype='dashed', color='darkgray') +
-  geom_linerange(size=1.1) + facet_grid(~ Cancer) + 
+  geom_linerange(size=1.1) + facet_grid(~ Cancer) +
   geom_point(size=2.5, aes(shape=optimal)) +
   scale_shape_manual(values=c(16, 11), guide='none') +
   scale_colour_gradientn(colours=rev(seq.cols)) +
-  guides(color=guide_colorbar(title='Model BIC')) + 
+  guides(color=guide_colorbar(title='Model BIC')) +
   scale_x_discrete(breaks=c(2, 5, 8)) +
   scale_y_continuous(breaks=seq(-1, 1, 0.2)) +
   theme_bw() + xlab('Subset Size') + ylab('Standardized Elevation Coefficient') +
@@ -313,7 +313,7 @@ gg.bs <- SetGGTheme(gg.bs) +
 OpenPDF('best-subsets.pdf', width=full.width, height=3.4)
 print(gg.bs); ClosePDF('best-subsets.pdf')
 
-write.table(subset.df, file.path(figdata.dir, 'best-subsets.txt'), 
+write.table(subset.df, file.path(figdata.dir, 'best-subsets.txt'),
   row.names=FALSE, sep='\t', quote=FALSE)
 
 
@@ -321,7 +321,7 @@ write.table(subset.df, file.path(figdata.dir, 'best-subsets.txt'),
 ## Lasso Viz
 
 ExtractLassoDF <- function(cancer) {
-  lasso <- cancer.list[[cancer]]$lasso 
+  lasso <- cancer.list[[cancer]]$lasso
   coefs <- coef(lasso, s=lasso$lambda.1se)[, 1]
   coefs <- coefs[coefs != 0]
   coefs <- coefs[names(coefs) != '(Intercept)']
@@ -366,20 +366,20 @@ terciles <- rev(levels(lung.df$smoking.qauntile))
 cat(AddNewLines(sprintf('Smoking terciles for lung cancer: %s, %s, %s', terciles[1], terciles[2], terciles[3]))); CatDiv()
 terc.labels <- c('high', 'mid', 'low')
 gg.smoke <- ggplot(lung.df, aes(elevation, lung, linetype=smoking.qauntile, shape=smoking.qauntile))
-gg.smoke <- SetGGTheme(gg.smoke) + 
+gg.smoke <- SetGGTheme(gg.smoke) +
   geom_smooth(method='lm', aes(weight=weight),
     color=NA, fill=biv.fill.col, alpha=1, show_guide=FALSE) +
   geom_smooth(method='lm', aes(weight=weight), color=biv.line.col, fill=NA) +
-  geom_point(aes(alpha=weight^.5), fill='black', color=NA) + 
+  geom_point(aes(alpha=weight^.5), fill='black', color=NA) +
   scale_alpha(range=c(0.25, 1)) +
   scale_linetype_manual(values=c('dotted', 'dashed', 'solid'), breaks=terciles, labels=terc.labels) +
   scale_shape_manual(values=c(25, 21, 24), breaks=terciles, labels=terc.labels) +
   theme(legend.justification=c(1,1), legend.position=c(1, 1),
-    legend.background=element_rect(color='#CCCCCC', size=0.2), 
+    legend.background=element_rect(color='#CCCCCC', size=0.2),
     legend.key.width=grid::unit(2, 'lines'),
     legend.key.height=grid::unit(0.95, 'lines'),
     legend.key=element_rect(linetype='blank')) +
-  guides(alpha=FALSE, shape=guide_legend('Smoking\nPrevalence', title.hjust=0.5), 
+  guides(alpha=FALSE, shape=guide_legend('Smoking\nPrevalence', title.hjust=0.5),
     linetype=guide_legend('Smoking\nPrevalence', title.hjust=0.5)) +
   theme(legend.title=element_text(face='plain')) +
   xlab('Elevation (km)') + ylab('Lung Cancer Incidence')
@@ -391,9 +391,9 @@ state.df <- do.call(rbind, lapply(states, function(state) {
   state.df <- lung.allvar.df[lung.allvar.df$state == state, ]
   state.lm <- lm(lung ~ elevation + smoking, weight=weight, data=state.df)
   conf.int <- confint(state.lm, level = 0.95)
-  data.frame('state'=state, 
+  data.frame('state'=state,
    'state_n'=sprintf('%s (%s)', state, nrow(state.df)),
-   'elevation.coef'=coef(state.lm)['elevation'], 
+   'elevation.coef'=coef(state.lm)['elevation'],
    'elevation.se'=summary(state.lm)$coef['elevation', 'Std. Error'],
    'elevation.lower'=conf.int['elevation', 1], 'elevation.upper'=conf.int['elevation', 2],
    'smoking.coef'=coef(state.lm)['smoking'],
@@ -420,20 +420,20 @@ state.fixed <- metafor::rma.uni(yi=state.df$elevation.coef,
   sei=state.df$elevation.se, level=99,  method='FE')
 
 state.df <- rbind(state.df, data.frame(
-  'state'='Meta', 'state_n'='Meta', 'elevation.coef'=state.fixed$b[1], 
+  'state'='Meta', 'state_n'='Meta', 'elevation.coef'=state.fixed$b[1],
   'elevation.se'=NA, 'elevation.lower'=state.fixed$ci.lb, 'elevation.upper'=state.fixed$ci.ub,
   'smoking.coef'=NA, 'smoking.lower'=NA, 'smoking.upper'=NA))
 lung.conf.int <- confint(model.list$lung, level=0.99)['elevation', ]
 
 gg.state <- ggplot(state.df, aes(state_n, elevation.coef, ymin=elevation.lower, ymax=elevation.upper))
-gg.state <- SetGGTheme(gg.state) + 
-  geom_hline(yintercept=0, linetype='dashed', color='darkgray') + 
+gg.state <- SetGGTheme(gg.state) +
+  geom_hline(yintercept=0, linetype='dashed', color='darkgray') +
   geom_rect(xmin=-Inf, xmax=Inf, fill=par.fill.col,
     ymin=lung.conf.int[1], ymax=lung.conf.int[2]) +
   geom_errorbar(aes(color=state_n == 'Meta'), size=.4, width=.2) +
-  geom_point(aes(color=state_n == 'Meta'), size=2, shape=19) + 
-  xlab('State') + ylab('Elevation Coefficient') + ylab(expression(beta[elevation])) + 
-  scale_x_discrete(limits=state.x.limits) + 
+  geom_point(aes(color=state_n == 'Meta'), size=2, shape=19) +
+  xlab('State') + ylab('Elevation Coefficient') + ylab(expression(beta[elevation])) +
+  scale_x_discrete(limits=state.x.limits) +
   scale_color_manual(values=c('#444444', 'black'), guide=FALSE) +
   coord_flip() + theme(axis.text.y=element_text(angle=50, hjust=1))
 
@@ -483,9 +483,9 @@ SubgroupLabelDF <- function(group, group_type) {
    'group_type'=group_type, 'coef'=coef.label, 'zcoef'=zcoef.label, 'r2'=r2.label)
 }
 
-age.label.df <- rbind(SubgroupLabelDF('over_65_lung', 'Age'), 
+age.label.df <- rbind(SubgroupLabelDF('over_65_lung', 'Age'),
   SubgroupLabelDF('under_65_lung', 'Age'))
-sex.label.df <- rbind(SubgroupLabelDF('male_lung', 'Sex'), 
+sex.label.df <- rbind(SubgroupLabelDF('male_lung', 'Sex'),
   SubgroupLabelDF('female_lung', 'Sex'))
 
 
@@ -515,10 +515,10 @@ options(stringsAsFactors=TRUE)
 ## Environmental Replacement - BIC Plot
 
 # Evironmental variable correlation plot
-cor.list <- OutcomePredictorCorPlot(data.df, c('lung', 'breast'), predictors=envir.covars, 
+cor.list <- OutcomePredictorCorPlot(data.df, c('lung', 'breast'), predictors=envir.covars,
 barwidth=6.1, barheight=0.75, xtext.angle=35, legend.position=c(1, 0.75))
-cor.list$plot <- cor.list$plot + theme(axis.text.y=element_text(angle=35, hjust=1)) 
-write.table(cor.list$data, file.path(figdata.dir, 'environment-correlation.txt'), 
+cor.list$plot <- cor.list$plot + theme(axis.text.y=element_text(angle=35, hjust=1))
+write.table(cor.list$data, file.path(figdata.dir, 'environment-correlation.txt'),
   row.names=FALSE, sep='\t', quote=FALSE)
 
 # BIC Plot
@@ -528,14 +528,14 @@ gg.bic <- ggplot(subset(envir.df, cancer %in% c('breast', 'lung')), aes(
   forced, log10(bayes_factor)))
 gg.bic <- SetGGTheme(gg.bic) +
   geom_hline(y_intercept=1, linetype='dashed', color='darkgrey') +
-  geom_point(aes(fill=cancer, size=abs(coefficient), 
+  geom_point(aes(fill=cancer, size=abs(coefficient),
     shape=sign(coefficient) > 0, color=cancer)) +
   scale_shape_manual(values=c(25, 24)) +
   scale_alpha_continuous(range=c(0.3, 0.9)) +
   scale_size_continuous(range=c(2.75, 7)) +
   scale_color_manual(values=c(fill.red, fill.blue)) +
   scale_fill_manual(values=c(fill.red, fill.blue)) +
-  theme(axis.text.x=element_text(angle=35, hjust=1)) + 
+  theme(axis.text.x=element_text(angle=35, hjust=1)) +
   theme(legend.position='none') +
   xlab('Elevation Replacement') + ylab(expression('log'[10]*'(Bayes Factor)')) +
   scale_x_discrete(limits=env.var.sorted, labels=gsub('_', ' ', env.var.sorted)) +
@@ -545,4 +545,3 @@ gg.bic <- SetGGTheme(gg.bic) +
 OpenPDF('environment.pdf', width=full.width, height=half.width)
 gridExtra::grid.arrange(cor.list$plot, gg.bic, nrow=1)
 ClosePDF('environment.pdf')
-

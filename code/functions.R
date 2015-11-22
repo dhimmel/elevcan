@@ -46,30 +46,30 @@ BarometricFormula <- function(
     g=9.80665      # acceleration due to gravity in m/s^2
   ) {
   # Returns atmouspheric oxygen concentration as a percentage of the sea level concentration
-  # Barometric formula adjusted for vertical linear temperature changes  
+  # Barometric formula adjusted for vertical linear temperature changes
   # http://dx.doi.org/10.1119/1.18555
-  
+
   Bz <- B * z
   mg <- m * g
   kB <- k * B
   exp <- mg/kB
-  
+
   ratio <- (1 - Bz / T0)^exp
-  Pz <- P0 * ratio  
+  Pz <- P0 * ratio
   percent <- ratio * 100
-  
+
   return(percent)
 }
 
 
-ReadCountyData <- function(path, 
+ReadCountyData <- function(path,
   states=c('AZ', 'CA', 'CO', 'ID', 'MT', 'NV', 'NM', 'OR', 'UT', 'WA', 'WY'),
   min.population=1e4, max.native=25.0, max.immigration=40.0, verbose=FALSE) {
   # Read the data file with United States county level measurements and
   # perform filtering. states is a vector of state abbreviations to keep.
   # Use states='all' to suppress state filtering.
 
-  data.df <- read.delim(path, na.strings='', 
+  data.df <- read.delim(path, na.strings='',
     colClasses=c('fips'='character'), stringsAsFactors=FALSE)
 
   if (verbose) {
@@ -149,7 +149,7 @@ StandardizeBetas <- function(model) {
     predictor.sd <- Hmisc::wtd.var(model.df[, predictor], weights=obs.weights, normwt=TRUE) ^ 0.5
     return(as.numeric(model.coefs[predictor]) / (response.sd / predictor.sd))
   })
-  
+
   return(std.betas)
 }
 
@@ -175,5 +175,3 @@ PartialRegressionX <- function(model, term='elevation') {
   resids <- resid(x.model)
   return(resids)
 }
-
-

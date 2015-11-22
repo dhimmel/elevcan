@@ -49,8 +49,8 @@ time.chr <- strftime(Sys.time(), format="%y-%m-%d %H:%M:%S %Z")
 cat(sprintf('Initiating Analysis: %s\n', time.chr)); CatDiv()
 
 # Read county data
-data.df <- ReadCountyData(county.data.path, 
-  states=states, min.population=min.population, 
+data.df <- ReadCountyData(county.data.path,
+  states=states, min.population=min.population,
   max.native=max.native, max.immigration=max.immigration, verbose=TRUE)
 
 # Calculate models
@@ -64,4 +64,3 @@ source(file.path(code.dir, 'create-tables.R'))
 
 # Save R session
 save.image(file=file.path(output.dir, 'session.RData'))
-
