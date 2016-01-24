@@ -65,3 +65,5 @@ source(file.path(code.dir, 'create-tables.R'))
 # Save R session
 save.image(file=file.path(output.dir, 'session.RData'))
 
+# Session Info
+sessionInfo(); CatDiv()
