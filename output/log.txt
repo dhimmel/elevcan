@@ -1,4 +1,4 @@
-Initiating Analysis: 16-01-23 18:07:34 PST
+Initiating Analysis: 16-01-23 18:25:32 PST
 --------------------------------------------------------------------------------
 Range of U.S. county elevation (km) without filtering: -0.0110 (Imperial, CA) to
 3.4730 (San Juan, CO)
@@ -36,8 +36,8 @@ other attached packages:
  [9] Matrix_1.1-2    leaps_2.9      
 
 loaded via a namespace (and not attached):
- [1] colorspace_1.2-4   dichromat_2.0-0    digest_0.6.3       gridExtra_0.9.1   
- [5] gtable_0.1.2       labeling_0.2       MASS_7.3-29        munsell_0.4.2     
- [9] plyr_1.8           proto_0.3-10       RColorBrewer_1.0-5 reshape2_1.2.2    
-[13] scales_0.2.3       stringr_0.6.2      tools_3.0.2       
+ [1] boot_1.3-9         colorspace_1.2-4   dichromat_2.0-0    digest_0.6.3      
+ [5] gridExtra_0.9.1    gtable_0.1.2       labeling_0.2       MASS_7.3-29       
+ [9] munsell_0.4.2      plyr_1.8           proto_0.3-10       RColorBrewer_1.0-5
+[13] reshape2_1.2.2     scales_0.2.3       stringr_0.6.2      tools_3.0.2       
 --------------------------------------------------------------------------------
