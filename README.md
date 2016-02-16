@@ -6,16 +6,17 @@ Project code and intermediate files for
 
 ###Directory Structure
 
-`code/`: All code that produced final project output. Run `Rscript ./run.R` to perform the analysis starting from the county-level dataset.  
-`code/data-creation/`: contains code that was used to create the county-level dataset including resource parsing, data integration, and population-weighted elevaton computation.
++ `code/`: All code that produced final project output. Run `Rscript code/run.R` (from the project's root directory) to perform the analysis starting from the county-level dataset.
 
-`output/`: output from running the analysis including the stdout log, underlying figure data, and persistent copy of the final R session.
++ `code/data-creation/`: contains code that was used to create the county-level dataset including resource parsing, data integration, and population-weighted elevaton computation.
 
-`tables/`: Latex tables generated from the analysis. Additional manual editing was performed on some tables.
++ `output/`: output from running the analysis including the stdout log, underlying figure data, and persistent copy of the final R session.
 
-`figures/`: Figures as pdfs generated from the analysis. Additional manual editing was performed for some figures.
++ `tables/`: Latex tables generated from the analysis. Additional manual editing was performed on some tables.
 
-`data/`: text files of the county-level dataset.
++ `figures/`: Figures as pdfs generated from the analysis. Additional manual editing was performed for some figures.
 
-`manual/`: Contains manually editted files (files that are not produced by running the analysis). Final versions of the figures are available as pdfs. Saved sessions from propreitary software used for image processing are also included.
++ `data/`: text files of the county-level dataset.
+
++ `manual/`: Contains manually editted files (files that are not produced by running the analysis). Final versions of the figures are available as pdfs. Saved sessions from propreitary software used for image processing are also included.
 
