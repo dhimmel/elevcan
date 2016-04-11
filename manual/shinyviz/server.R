@@ -9,23 +9,23 @@ stroke.colors <- c(bivariate = '#990000', partial = '#000099')
 fill.colors <- c(bivariate = '#ffb2b2', partial = '#b2b2ff')
 fig.panels <- c(bivariate = 'A', partial = 'B')
 
-xlabels <- c(bivariate = 'Elevation (meters)', partial = 'Elevation Residuals')
+xlabels <- c(bivariate = 'Elevation (kilometers)', partial = 'Elevation Residuals')
 ylabels <- c(bivariate = 'Lung Cancer Incidence (per 100,000)', partial = 'Lung Cancer Incidence Residuals')
 
 axis.properties <- axis_props(title = list(fontSize = 15))
 
 shinyServer(function(input, output, session) {
-  
+
   scatter.df <- reactive({
     subset(data.df, plot_type == input$plot_type)
   })
-  
+
   scatterplot <- reactive({
     xlabel <- as.character(xlabels[input$plot_type])
     ylabel <- as.character(ylabels[input$plot_type])
     #stroke.color <- stroke.colors[input$plot_type]
     #fill.color <- fill.colors[input$plot_type]
-    
+
     scatter.df %>%
       ggvis(x = ~Elevation, y = ~Incidence) %>%
       layer_model_predictions(model = 'lm', se = TRUE,
@@ -40,7 +40,7 @@ shinyServer(function(input, output, session) {
 
   scatterplot %>%
     bind_shiny('scatterplot')
-  
+
   output$description <- renderText({
     paste0(
       'Points represent Western US counties shaded according to population. ',
@@ -50,8 +50,8 @@ shinyServer(function(input, output, session) {
       '',
       'This plot corresponds to <a href="http://dx.doi.org/10.7717/peerj.705/fig-4" target="_blank">manuscript Fig. 4',
       fig.panels[input$plot_type], '</a>.'
-    
+
     )
     })
-  
+
 })
